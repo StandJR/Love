@@ -1,0 +1,1143 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Билет на свидание</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Nunito:wght@400;600;800&display=swap">
+<style>
+  /* Layout: небо на весь фон (день или ночь по теме), поверх него стеклянная карточка с шагами. Начало с конверта. Под карточкой всегда кнопка «побыть одной». Акцент голубой. */
+  :root {
+    --bg: #CFE8FF;
+    --sky-top: #8FC9FF;
+    --sky-bottom: #E4F3FF;
+    --surface: rgba(255, 255, 255, 0.9);
+    --solid: #FFFFFF;
+    --tint: #EEF7FF;
+    --fg: #12263B;
+    --muted: #4F6781;
+    --accent: #1A73D9;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #D6EAFE;
+    --line: #BCD8F3;
+    --shadow: 0 28px 60px -26px rgba(20, 90, 180, 0.55);
+    --orb: #FFF3C2;
+    --orb-halo1: rgba(255, 243, 194, 0.4);
+    --orb-halo2: rgba(255, 243, 194, 0.55);
+    --cloud: #FFFFFF;
+    --cloud-o: 0.85;
+    --star-o: 0;
+    --env-back: #86BEF2;
+    --env-front: #B7D9FA;
+    --env-flap: #A2CCF6;
+    --paper: #FFFFFF;
+    --font-display: "Marck Script", "Segoe Script", "Comic Sans MS", cursive;
+    --font-body: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10294B;
+      --sky-top: #081329;
+      --sky-bottom: #17375F;
+      --surface: rgba(16, 33, 54, 0.88);
+      --solid: #12263E;
+      --tint: #0F2136;
+      --fg: #E7F1FB;
+      --muted: #9FB6CE;
+      --accent: #6DB8FF;
+      --accent-ink: #06203B;
+      --accent-soft: #1E3C60;
+      --line: #2A4A6C;
+      --shadow: 0 28px 60px -26px rgba(0, 0, 0, 0.8);
+      --orb: #FFF6D8;
+      --orb-halo1: rgba(255, 246, 216, 0.08);
+      --orb-halo2: rgba(170, 205, 255, 0.28);
+      --cloud-o: 0.06;
+      --star-o: 1;
+      --env-back: #2B5489;
+      --env-front: #3B6BA7;
+      --env-flap: #3562A0;
+      --paper: #E8F1FB;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10294B;
+    --sky-top: #081329;
+    --sky-bottom: #17375F;
+    --surface: rgba(16, 33, 54, 0.88);
+    --solid: #12263E;
+    --tint: #0F2136;
+    --fg: #E7F1FB;
+    --muted: #9FB6CE;
+    --accent: #6DB8FF;
+    --accent-ink: #06203B;
+    --accent-soft: #1E3C60;
+    --line: #2A4A6C;
+    --shadow: 0 28px 60px -26px rgba(0, 0, 0, 0.8);
+    --orb: #FFF6D8;
+    --orb-halo1: rgba(255, 246, 216, 0.08);
+    --orb-halo2: rgba(170, 205, 255, 0.28);
+    --cloud-o: 0.06;
+    --star-o: 1;
+    --env-back: #2B5489;
+    --env-front: #3B6BA7;
+    --env-flap: #3562A0;
+    --paper: #E8F1FB;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    padding-block: 22px 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    overflow-x: hidden;
+  }
+
+  /* Небо */
+  .sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+  }
+  .orb {
+    position: absolute;
+    top: 7%;
+    right: 11%;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: var(--orb);
+    box-shadow: 0 0 0 16px var(--orb-halo1), 0 0 70px 34px var(--orb-halo2);
+  }
+  .cloud {
+    position: absolute;
+    left: -220px;
+    top: var(--y);
+    width: 150px;
+    height: 42px;
+    border-radius: 42px;
+    background: var(--cloud);
+    opacity: var(--cloud-o);
+    animation: drift var(--t) linear infinite;
+    animation-delay: var(--dl);
+  }
+  .cloud::before, .cloud::after { content: ""; position: absolute; background: inherit; border-radius: 50%; }
+  .cloud::before { width: 62px; height: 62px; top: -28px; left: 26px; }
+  .cloud::after { width: 46px; height: 46px; top: -18px; left: 82px; }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(calc(100vw + 460px)); } }
+  .stars { position: absolute; inset: 0; opacity: var(--star-o); }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #FFF8E1;
+    animation: twinkle var(--d) ease-in-out infinite;
+    animation-delay: var(--l);
+  }
+  @keyframes twinkle { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
+
+  .shell { position: relative; z-index: 1; max-width: 32rem; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+  /* Прогресс */
+  .progress { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 0; padding: 0 4px; list-style: none; transition: opacity 0.4s; }
+  .progress.dim { opacity: 0.25; }
+  .progress li { height: 6px; border-radius: 99px; background: rgba(255, 255, 255, 0.55); overflow: hidden; position: relative; }
+  :root[data-theme="dark"] .progress li { background: rgba(255, 255, 255, 0.18); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .progress li { background: rgba(255, 255, 255, 0.18); } }
+  .progress li::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .progress li.on::after { transform: scaleX(1); }
+
+  /* Карточка */
+  .card {
+    position: relative;
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    padding: 28px 22px 24px;
+  }
+  .stage { position: relative; transition: height 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .step { display: flex; flex-direction: column; gap: 16px; }
+  .step[hidden] { display: none; }
+
+  /* Смена шагов */
+  .in-fwd { animation: inFwd 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .out-fwd { animation: outFwd 0.24s ease-in both; }
+  .in-back { animation: inBack 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .out-back { animation: outBack 0.24s ease-in both; }
+  @keyframes inFwd { from { opacity: 0; transform: translateX(36px) scale(0.98); } to { opacity: 1; transform: none; } }
+  @keyframes outFwd { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(-36px) scale(0.98); } }
+  @keyframes inBack { from { opacity: 0; transform: translateX(-36px) scale(0.98); } to { opacity: 1; transform: none; } }
+  @keyframes outBack { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(36px) scale(0.98); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes swap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { 0% { transform: scale(0.7); } 60% { transform: scale(1.2); } 100% { transform: scale(1.06); } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+  .in-fwd .choice, .in-back .choice { animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: calc(var(--n, 0) * 70ms + 140ms); }
+
+  .eyebrow {
+    align-self: flex-start;
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 99px;
+    padding: 5px 12px;
+  }
+  h1, h2 { font-family: var(--font-display); font-weight: 400; margin: 0; line-height: 1.08; text-wrap: balance; }
+  h1 { font-size: clamp(3rem, 13vw, 4rem); color: var(--accent); }
+  h2 { font-size: clamp(2.3rem, 9.5vw, 3rem); }
+  h1:focus, h2:focus { outline: none; }
+  .step p { margin: 0; }
+  .hint { color: var(--muted); }
+
+  /* Конверт */
+  .step.intro { align-items: center; text-align: center; padding-top: 6px; }
+  .env {
+    position: relative;
+    display: block;
+    width: min(270px, 78%);
+    aspect-ratio: 3 / 2;
+    margin: 46px auto 8px;
+    border: 0;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    animation: bob 4.6s ease-in-out infinite;
+  }
+  .env.open { animation: none; }
+  .env > span { position: absolute; display: block; }
+  .env-back { inset: 0; border-radius: 12px; background: var(--env-back); box-shadow: 0 22px 34px -18px rgba(10, 60, 130, 0.6); }
+  .env-paper {
+    left: 9%; right: 9%; top: 7%; bottom: 10%;
+    border-radius: 8px;
+    background: repeating-linear-gradient(180deg, transparent 0 17px, var(--accent-soft) 17px 19px), var(--paper);
+    transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s;
+  }
+  .env.open .env-paper { transform: translateY(-46%); }
+  .env-front { inset: 0; border-radius: 12px; background: var(--env-front); clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%); }
+  .env-flap {
+    left: 0; right: 0; top: 0; height: 56%;
+    background: var(--env-flap);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top;
+    transition: transform 0.6s ease, opacity 0.2s ease 0.5s;
+  }
+  .env.open .env-flap { transform: perspective(600px) rotateX(180deg); opacity: 0; }
+  .seal {
+    left: 50%; top: 56%;
+    width: 48px; height: 48px;
+    margin: -24px 0 0 -24px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    display: grid !important;
+    place-items: center;
+    box-shadow: 0 6px 14px -4px rgba(10, 60, 130, 0.6);
+    transition: transform 0.35s, opacity 0.3s;
+  }
+  .env.open .seal { transform: scale(0.4); opacity: 0; }
+  .env:focus-visible { outline: 3px solid var(--accent); outline-offset: 10px; border-radius: 12px; }
+
+  /* Билет */
+  .ticket {
+    position: relative;
+    background: var(--tint);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    transform: rotate(-1deg);
+    margin-block: 2px;
+  }
+  .ticket-top { padding: 14px 18px 12px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+  .ticket-top p { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .ticket-top strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.9rem; line-height: 1.1; }
+  .stamp {
+    flex: none;
+    width: 50px;
+    height: 50px;
+    border: 2px dashed var(--accent);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+    transform: rotate(8deg);
+  }
+  .perf { position: relative; border-top: 2px dashed var(--line); }
+  .perf::before, .perf::after {
+    content: "";
+    position: absolute;
+    top: -13px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--solid);
+    border: 1px solid var(--line);
+  }
+  .perf::before { left: -13px; }
+  .perf::after { right: -13px; }
+  .ticket dl { margin: 0; padding: 14px 18px 16px; display: grid; gap: 8px; }
+  .ticket dl div { display: grid; grid-template-columns: 5.2rem 1fr; gap: 10px; min-width: 0; }
+  .ticket dt { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding-top: 0.25rem; }
+  .ticket dd { margin: 0; min-width: 0; font-size: 0.95rem; line-height: 1.5; }
+
+  /* Календарь */
+  .cal { display: flex; flex-direction: column; gap: 10px; }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cal-title { font-weight: 800; font-size: 1.12rem; text-transform: capitalize; }
+  .nav {
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    background: var(--solid);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+  .nav:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+  .nav:disabled { opacity: 0.35; cursor: default; }
+  .grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .grid.swap { animation: swap 0.3s ease both; }
+  .wd { text-align: center; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-block: 4px; }
+  .wd.we { color: var(--accent); }
+  .day {
+    aspect-ratio: 1;
+    max-width: 100%;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--fg);
+    font: inherit;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+  .day:hover:not(:disabled) { background: var(--accent-soft); }
+  .day:disabled { opacity: 0.3; cursor: default; }
+  .day.today { box-shadow: inset 0 0 0 1.5px var(--accent); }
+  .day[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); transform: scale(1.06); animation: pop 0.38s ease both; }
+  .picked { min-height: 1.6em; font-weight: 800; color: var(--accent); }
+
+  /* Выбор */
+  .choices { display: grid; gap: 10px; }
+  .choices.cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .choice {
+    position: relative;
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    gap: 14px;
+    align-items: center;
+    cursor: pointer;
+    background: var(--solid);
+    border: 1.5px solid var(--line);
+    border-radius: 18px;
+    padding: 12px 14px;
+    transition: border-color 0.15s, background-color 0.15s, transform 0.15s;
+  }
+  .choice input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .ico {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    transition: background-color 0.15s, color 0.15s;
+  }
+  .choice strong { display: block; font-weight: 800; line-height: 1.3; padding-right: 22px; }
+  .choice small { display: block; color: var(--muted); font-size: 0.92rem; line-height: 1.4; margin-top: 1px; }
+  .choice::after {
+    content: "\2713";
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 12px;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transform: scale(0.4);
+    transition: opacity 0.2s, transform 0.25s;
+  }
+  .choice:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+  .choice:has(input:checked)::after { opacity: 1; transform: scale(1); }
+  .choice:has(input:checked) .ico { background: var(--accent); color: var(--accent-ink); }
+  .choice:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .cols .choice { grid-template-columns: 38px 1fr; gap: 10px; padding: 10px 12px; }
+  .cols .ico { width: 38px; height: 38px; border-radius: 12px; }
+  .cols .choice strong { font-size: 0.97rem; padding-right: 16px; }
+  .cols .choice::after { top: 6px; right: 7px; width: 17px; height: 17px; font-size: 10px; }
+  .cols .choice:last-child { grid-column: 1 / -1; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-weight: 800; font-size: 0.95rem; }
+  .field input[type="text"], .field textarea {
+    font: inherit;
+    color: var(--fg);
+    background: var(--solid);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    width: 100%;
+    resize: vertical;
+  }
+  .field input[type="text"]:focus, .field textarea:focus { outline: 3px solid var(--accent-soft); border-color: var(--accent); }
+  .field[hidden] { display: none; }
+
+  /* Итог */
+  .summary { margin: 0; display: grid; gap: 8px; background: var(--tint); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .summary[hidden] { display: none; }
+  .summary div { display: grid; grid-template-columns: 5.2rem 1fr; gap: 10px; min-width: 0; }
+  .summary dt { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding-top: 0.28rem; }
+  .summary dd { margin: 0; font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+  .reply-box {
+    margin: 0;
+    background: var(--solid);
+    border: 1.5px dashed var(--accent);
+    border-radius: 14px;
+    padding: 14px 16px;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    font-size: 0.97rem;
+  }
+  .lead[hidden] { display: none; }
+  .reply-box[hidden] { display: none; }
+  .step.result { align-items: center; text-align: center; }
+  .step.result .actions { width: 100%; }
+  .step.result .nav-row { justify-content: center; }
+  .badge {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: var(--accent-ink);
+    animation: badgeIn 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+  }
+  .badge.fail { background: var(--accent-soft); color: var(--accent); }
+  .badge svg[hidden] { display: none; }
+  .badge path { stroke-dasharray: 34; stroke-dashoffset: 34; animation: draw 0.5s ease 0.3s forwards; }
+  @keyframes badgeIn { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: none; } }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  /* Кнопки */
+  .nav-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 2px; }
+  .nav-row.end { justify-content: flex-end; }
+  .btn {
+    display: inline-block;
+    font: inherit;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+    border: 1.5px solid var(--accent);
+    border-radius: 999px;
+    padding: 13px 26px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s;
+  }
+  .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 22px -10px var(--accent); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn.secondary { background: transparent; color: var(--accent); }
+  .btn[hidden] { display: none; }
+  .btn:focus-visible, .ghost:focus-visible, .nav:focus-visible, .day:focus-visible, .alone-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .ghost { font: inherit; font-weight: 600; background: none; border: 0; padding: 10px 6px; color: var(--muted); cursor: pointer; }
+  .ghost:hover { color: var(--accent); }
+  .actions { display: flex; flex-direction: column; gap: 10px; }
+  .actions .btn { width: 100%; }
+  .status { font-size: 0.95rem; color: var(--muted); min-height: 1.5em; }
+
+  /* Кнопка «побыть одной» */
+  .alone-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    font: inherit;
+    font-weight: 800;
+    color: var(--fg);
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    padding: 14px 22px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .alone-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .alone-btn svg { color: var(--accent); flex: none; }
+  body[data-mode="alone"] .alone-btn { display: none; }
+  .sign { text-align: center; margin: 0; font-size: 0.95rem; color: var(--fg); text-shadow: 0 1px 8px var(--bg); }
+
+  @media (max-width: 420px) {
+    .card { padding: 24px 16px 20px; }
+    .ticket dl div, .summary div { grid-template-columns: 1fr; gap: 2px; }
+    .ticket dt, .summary dt { padding-top: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cloud { animation: none; left: var(--x); }
+    .star, .env, .day[aria-pressed="true"], .badge { animation: none; }
+    .badge path { animation: none; stroke-dashoffset: 0; }
+    .in-fwd, .out-fwd, .in-back, .out-back, .in-fwd .choice, .in-back .choice, .grid.swap { animation: none; }
+    .stage, .progress li::after, .choice, .day, .btn, .env-paper, .env-flap, .seal { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true">
+  <div class="orb"></div>
+  <div class="cloud" style="--y: 14%; --t: 70s; --dl: -20s; --x: 12%"></div>
+  <div class="cloud" style="--y: 38%; --t: 95s; --dl: -60s; --x: 62%"></div>
+  <div class="cloud" style="--y: 66%; --t: 80s; --dl: -35s; --x: 30%"></div>
+  <div class="stars" id="stars"></div>
+</div>
+
+<div class="shell">
+  <ol class="progress" id="progress" aria-hidden="true">
+    <li></li><li></li><li></li><li></li><li></li>
+  </ol>
+
+  <div class="card">
+    <div class="stage" id="stage">
+
+      <!-- 0. Конверт -->
+      <section class="step intro" data-step="0">
+        <h1 tabindex="-1">Тебе письмо</h1>
+        <button type="button" class="env" id="env" aria-label="Открыть письмо">
+          <span class="env-back"></span>
+          <span class="env-paper"></span>
+          <span class="env-front"></span>
+          <span class="env-flap"></span>
+          <span class="seal"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.4 2.7 4.8 6.2 4.8c2.1 0 3.6 1.2 4.4 2.5.4.6 1.4.6 1.8 0 .8-1.3 2.3-2.5 4.4-2.5 3.5 0 5.3 3.6 3.8 6.9C19.5 16.4 12 21 12 21z"/></svg></span>
+        </button>
+        <p class="hint">Нажми на конверт, он от того, кто по тебе скучает.</p>
+      </section>
+
+      <!-- 1. Письмо -->
+      <section class="step" data-step="1" hidden>
+        <h2 tabindex="-1">Привет, любимая</h2>
+        <p>Я вижу, что тебе сейчас нелегко. Объяснять ничего не нужно, и делать вид, что всё хорошо, тоже. Если хочется побыть дома, это нормально. Я рядом.</p>
+        <p>Но мне очень тебя не хватает, поэтому у меня к тебе маленькое приглашение. Без давления и без плана, который нельзя поменять.</p>
+        <div class="ticket" aria-label="Билет на свидание">
+          <div class="ticket-top">
+            <div>
+              <p>Один билет, два места</p>
+              <strong>Свидание</strong>
+            </div>
+            <div class="stamp" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.4 2.7 4.8 6.2 4.8c2.1 0 3.6 1.2 4.4 2.5.4.6 1.4.6 1.8 0 .8-1.3 2.3-2.5 4.4-2.5 3.5 0 5.3 3.6 3.8 6.9C19.5 16.4 12 21 12 21z"/></svg>
+            </div>
+          </div>
+          <div class="perf" aria-hidden="true"></div>
+          <dl>
+            <div><dt>Когда</dt><dd>Выбираешь ты</dd></div>
+            <div><dt>Условия</dt><dd>Можно передумать, можно уйти домой в любой момент, можно молчать весь вечер</dd></div>
+          </dl>
+        </div>
+        <p class="hint">Если сейчас хочется побыть одной, внизу есть кнопка. Это тоже хороший ответ, и я его пойму.</p>
+        <div class="nav-row end">
+          <button type="button" class="btn" data-next>Хочу ответить</button>
+        </div>
+      </section>
+
+      <!-- 2. Дата -->
+      <section class="step" data-step="2" hidden>
+        <p class="eyebrow">Вопрос 1 из 4</p>
+        <h2 tabindex="-1">Какой день тебе подходит?</h2>
+        <p class="hint">Выбирай любой. Если передумаешь, нажми на другой.</p>
+        <div class="cal">
+          <div class="cal-head">
+            <button type="button" class="nav" id="prevMonth" aria-label="Предыдущий месяц">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+            </button>
+            <div class="cal-title" id="calTitle" aria-live="polite"></div>
+            <button type="button" class="nav" id="nextMonth" aria-label="Следующий месяц">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <div class="grid" id="calWeekdays" aria-hidden="true"></div>
+          <div class="grid" id="calGrid"></div>
+        </div>
+        <p class="picked" id="picked" aria-live="polite"></p>
+        <div class="nav-row">
+          <button type="button" class="ghost" data-back>Назад</button>
+          <button type="button" class="btn" data-next disabled>Дальше</button>
+        </div>
+      </section>
+
+      <!-- 3. Время -->
+      <section class="step" data-step="3" hidden>
+        <p class="eyebrow">Вопрос 2 из 4</p>
+        <h2 tabindex="-1">В какое время тебе удобнее?</h2>
+        <p class="hint">Как тебе будет комфортнее.</p>
+        <div class="choices cols" role="radiogroup" aria-label="Время">
+          <label class="choice" style="--n:0">
+            <input type="radio" name="time" value="утром">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17a7 7 0 0 1 14 0M12 5v3M4.6 10.6l1.8 1.8M19.4 10.6l-1.8 1.8M2 17h20M7 21h10"/></svg></span>
+            <strong>Утром</strong>
+          </label>
+          <label class="choice" style="--n:1">
+            <input type="radio" name="time" value="днём">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>
+            <strong>Днём</strong>
+          </label>
+          <label class="choice" style="--n:2">
+            <input type="radio" name="time" value="ближе к вечеру">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17a7 7 0 0 1 14 0M2 17h20M8 21h8"/></svg></span>
+            <strong>Ближе к вечеру</strong>
+          </label>
+          <label class="choice" style="--n:3">
+            <input type="radio" name="time" value="вечером">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span>
+            <strong>Вечером</strong>
+          </label>
+          <label class="choice" style="--n:4">
+            <input type="radio" name="time" value="как получится">
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <strong>Как получится</strong>
+          </label>
+        </div>
+        <div class="nav-row">
+          <button type="button" class="ghost" data-back>Назад</button>
+          <button type="button" class="btn" data-next disabled>Дальше</button>
+        </div>
+      </section>
+
+      <!-- 4. Занятие -->
+      <section class="step" data-step="4" hidden>
+        <p class="eyebrow">Вопрос 3 из 4</p>
+        <h2 tabindex="-1">Чем займёмся?</h2>
+        <p class="hint">Любой вариант хороший. Можно и свой.</p>
+        <div class="choices" role="radiogroup" aria-label="Занятие">
+          <label class="choice" style="--n:0">
+            <input type="radio" name="place" value="кино">
+            <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="11" rx="2"/><path d="M3 9l2.5-5 4 .8L7 9.5M10 4.8l4 .8-2.5 4.4M14 5.6l4 .8L15.5 10.8"/></svg></span>
+            <span><strong>Кино</strong><small>Темно, тихо, попкорн. Разговаривать не обязательно.</small></span>
+          </label>
+          <label class="choice" style="--n:1">
+            <input type="radio" name="place" value="ресторан">
+            <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a3 3 0 0 0 3 3v9M9 3v6M17 21V3c-2.4 1.6-3 5-3 8h3"/></svg></span>
+            <span><strong>Ресторан</strong><small>Вкусный ужин за красивым столиком.</small></span>
+          </label>
+          <label class="choice" style="--n:2">
+            <input type="radio" name="place" value="кофе">
+            <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h11v4a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8.5 3.5v2M12.5 3.5v2"/></svg></span>
+            <span><strong>Кофе</strong><small>Что-нибудь горячее и десерт, без спешки.</small></span>
+          </label>
+          <label class="choice" style="--n:3">
+            <input type="radio" name="place" value="на месте решим">
+            <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span>
+            <span><strong>На месте решим</strong><small>Встретимся и выберем по настроению.</small></span>
+          </label>
+          <label class="choice" style="--n:4">
+            <input type="radio" name="place" value="свой вариант">
+            <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg></span>
+            <span><strong>Свой вариант</strong><small>Расскажи, чего хочется тебе.</small></span>
+          </label>
+        </div>
+        <div class="field" id="customWrap" hidden>
+          <label for="custom">Что тебе хочется?</label>
+          <input type="text" id="custom" maxlength="120" placeholder="Например, посидеть на крыше с пледом">
+        </div>
+        <div class="nav-row">
+          <button type="button" class="ghost" data-back>Назад</button>
+          <button type="button" class="btn" data-next disabled>Дальше</button>
+        </div>
+      </section>
+
+      <!-- 5. Ответ -->
+      <section class="step" data-step="5" hidden>
+        <p class="eyebrow" id="sendEyebrow">Вопрос 4 из 4</p>
+        <h2 tabindex="-1" id="sendTitle">Осталось отправить ответ</h2>
+        <p class="lead" id="sendLead" hidden>Я понимаю и не обижаюсь. Если хочешь, дай мне знать одним нажатием, а дальше ты сама решаешь, когда написать.</p>
+        <dl class="summary" id="summaryBox">
+          <div><dt>Дата</dt><dd id="sumDate"></dd></div>
+          <div><dt>Время</dt><dd id="sumTime"></dd></div>
+          <div><dt>Занятие</dt><dd id="sumPlace"></dd></div>
+        </dl>
+        <div class="field">
+          <label for="note" id="noteLabel">Хочешь что-то добавить? Необязательно.</label>
+          <textarea id="note" rows="3" maxlength="300" placeholder="Пожелание, просьба или пара слов"></textarea>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn" id="send">Отправить ответ</button>
+        </div>
+        <div class="nav-row">
+          <button type="button" class="ghost" id="backSend">Назад</button>
+        </div>
+      </section>
+
+      <!-- 6. Результат -->
+      <section class="step result" data-step="6" hidden>
+        <div class="badge" id="resBadge" aria-hidden="true">
+          <svg id="icoOk" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          <svg id="icoFail" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M12 6v7M12 18v.5"/></svg>
+        </div>
+        <h2 tabindex="-1" id="resTitle">Готово</h2>
+        <p id="resText"></p>
+        <p class="reply-box" id="reply" hidden aria-label="Текст ответа"></p>
+        <div class="actions" id="resFail" hidden>
+          <button type="button" class="btn" id="retry">Попробовать ещё раз</button>
+          <a class="btn secondary" id="tg" href="#" target="_blank" rel="noopener">Написать в Телеграм</a>
+          <button type="button" class="btn secondary" id="copy">Скопировать текст</button>
+        </div>
+        <p class="status" id="status" aria-live="polite"></p>
+        <div class="nav-row" id="resBack" hidden>
+          <button type="button" class="ghost" id="backResult">Вернуться и изменить</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <button type="button" class="alone-btn" id="alone">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+    Мне сейчас хочется побыть одной
+  </button>
+  <p class="sign">Я тебя люблю. Подожду, сколько нужно.</p>
+</div>
+
+<script>
+  /* ================================================================
+     ВСТАВЬ СВОИ ДАННЫЕ ЗДЕСЬ
+     apiUrl:     адрес воркера из Cloudflare, например
+                 "https://mojbot.tvoj-nik.workers.dev".
+                 Через него ответ приходит тебе в Телеграм от бота.
+     tgUsername: твой ник в Телеграме без @. Нужен только как запасной
+                 вариант, если отправка не получилась.
+     ================================================================ */
+  var CONFIG = {
+    apiUrl: "",
+    tgUsername: "umid_mhrmv"
+  };
+
+  (function () {
+    var $ = function (id) { return document.getElementById(id); };
+    var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
+    var bars = Array.prototype.slice.call(document.querySelectorAll("#progress li"));
+    var stage = $("stage");
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var cur = 0;
+    var busy = false;
+    var mode = "yes";
+    var returnTo = 1;
+    var state = { date: null, time: "", place: "", custom: "", note: "" };
+
+    var fmtDate = new Intl.DateTimeFormat("ru", { weekday: "long", day: "numeric", month: "long" });
+    var fmtMonth = new Intl.DateTimeFormat("ru", { month: "long", year: "numeric" });
+
+    function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+    var today = startOfDay(new Date());
+    var view = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    /* ---------- Звёзды ---------- */
+    (function () {
+      var box = $("stars");
+      for (var i = 0; i < 70; i++) {
+        var s = document.createElement("span");
+        var size = 1 + Math.random() * 2.2;
+        s.className = "star";
+        s.style.left = (Math.random() * 100).toFixed(2) + "%";
+        s.style.top = (Math.random() * 100).toFixed(2) + "%";
+        s.style.width = s.style.height = size.toFixed(1) + "px";
+        s.style.setProperty("--d", (2 + Math.random() * 4).toFixed(1) + "s");
+        s.style.setProperty("--l", (-Math.random() * 6).toFixed(1) + "s");
+        box.appendChild(s);
+      }
+    })();
+
+    /* ---------- Календарь ---------- */
+    ["пн", "вт", "ср", "чт", "пт", "сб", "вс"].forEach(function (w, i) {
+      var el = document.createElement("div");
+      el.className = "wd" + (i > 4 ? " we" : "");
+      el.textContent = w;
+      $("calWeekdays").appendChild(el);
+    });
+
+    function sameDay(a, b) { return a && b && a.getTime() === b.getTime(); }
+
+    function renderCal() {
+      var grid = $("calGrid");
+      grid.textContent = "";
+      $("calTitle").textContent = fmtMonth.format(view);
+      var first = (new Date(view.getFullYear(), view.getMonth(), 1).getDay() + 6) % 7;
+      var days = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
+      for (var i = 0; i < first; i++) grid.appendChild(document.createElement("span"));
+      for (var d = 1; d <= days; d++) {
+        var date = new Date(view.getFullYear(), view.getMonth(), d);
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "day" + (sameDay(date, today) ? " today" : "");
+        b.textContent = String(d);
+        b.setAttribute("aria-label", fmtDate.format(date));
+        b.setAttribute("aria-pressed", sameDay(date, state.date) ? "true" : "false");
+        b.disabled = date < today;
+        (function (dt) {
+          b.addEventListener("click", function () {
+            state.date = dt;
+            renderCal();
+            updatePicked();
+            validate();
+          });
+        })(date);
+        grid.appendChild(b);
+      }
+      var thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      var lastMonth = new Date(today.getFullYear(), today.getMonth() + 12, 1);
+      $("prevMonth").disabled = view <= thisMonth;
+      $("nextMonth").disabled = view >= lastMonth;
+    }
+
+    function animateGrid() {
+      var g = $("calGrid");
+      g.classList.remove("swap");
+      void g.offsetWidth;
+      g.classList.add("swap");
+    }
+
+    $("prevMonth").addEventListener("click", function () {
+      view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
+      renderCal(); animateGrid();
+    });
+    $("nextMonth").addEventListener("click", function () {
+      view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+      renderCal(); animateGrid();
+    });
+
+    function updatePicked() {
+      $("picked").textContent = state.date ? "Выбрано: " + fmtDate.format(state.date) : "";
+    }
+
+    /* ---------- Данные ---------- */
+    function placeText() {
+      return state.place === "свой вариант" ? state.custom.trim() : state.place;
+    }
+
+    function messageText() {
+      var lines;
+      if (mode === "alone") {
+        lines = ["Мне сейчас хочется побыть одной. Спасибо, что позвал. Я напишу сама, когда буду готова."];
+      } else {
+        lines = [
+          "Да, я согласна на свидание!",
+          "Дата: " + (state.date ? fmtDate.format(state.date) : ""),
+          "Время: " + state.time,
+          "Занятие: " + placeText()
+        ];
+      }
+      if (state.note.trim()) lines.push("От меня: " + state.note.trim());
+      return lines.join("\n");
+    }
+
+    function validity(i) {
+      if (i === 2) return !!state.date;
+      if (i === 3) return !!state.time;
+      if (i === 4) return !!state.place && (state.place !== "свой вариант" || state.custom.trim().length > 0);
+      return true;
+    }
+
+    function validate() {
+      steps.forEach(function (s, i) {
+        var next = s.querySelector("[data-next]");
+        if (next && i > 1) next.disabled = !validity(i);
+      });
+    }
+
+    function applyMode() {
+      var alone = mode === "alone";
+      document.body.setAttribute("data-mode", mode);
+      $("sendEyebrow").textContent = alone ? "Без вопросов" : "Вопрос 4 из 4";
+      $("sendTitle").textContent = alone ? "Хорошо. Побудь одна" : "Осталось отправить ответ";
+      $("sendLead").hidden = !alone;
+      $("summaryBox").hidden = alone;
+      $("noteLabel").textContent = alone
+        ? "Если хочешь, добавь пару слов. Необязательно."
+        : "Хочешь что-то добавить? Необязательно.";
+      $("backSend").textContent = alone ? "Передумала, вернуться" : "Назад";
+      $("progress").classList.toggle("dim", alone);
+    }
+
+    function updateFinal() {
+      $("sumDate").textContent = state.date ? fmtDate.format(state.date) : "";
+      $("sumTime").textContent = state.time;
+      $("sumPlace").textContent = placeText();
+    }
+
+    document.querySelectorAll('input[name="time"]').forEach(function (r) {
+      r.addEventListener("change", function () { state.time = r.value; validate(); });
+    });
+    document.querySelectorAll('input[name="place"]').forEach(function (r) {
+      r.addEventListener("change", function () {
+        state.place = r.value;
+        var isCustom = r.value === "свой вариант";
+        $("customWrap").hidden = !isCustom;
+        if (isCustom) $("custom").focus({ preventScroll: true });
+        validate();
+        refreshHeight();
+      });
+    });
+    $("custom").addEventListener("input", function () { state.custom = this.value; validate(); });
+    $("note").addEventListener("input", function () { state.note = this.value; updateFinal(); });
+
+    /* ---------- Переходы ---------- */
+    function refreshHeight() {
+      var el = steps[cur];
+      stage.style.height = stage.offsetHeight + "px";
+      void stage.offsetHeight;
+      stage.style.height = el.offsetHeight + "px";
+      setTimeout(function () { stage.style.height = ""; }, 440);
+    }
+
+    function setProgress() {
+      bars.forEach(function (b, i) { b.classList.toggle("on", cur >= i + 1); });
+    }
+
+    function finishEnter(to) {
+      var h = to.querySelector("h1, h2");
+      if (h) h.focus({ preventScroll: true });
+      window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    }
+
+    function go(to) {
+      if (busy || to === cur || to < 0 || to >= steps.length) return;
+      var dir = to > cur ? "fwd" : "back";
+      var from = steps[cur];
+      var next = steps[to];
+      if (to === 5) updateFinal();
+      cur = to;
+      setProgress();
+
+      if (reduce) {
+        from.hidden = true;
+        next.hidden = false;
+        finishEnter(next);
+        return;
+      }
+
+      busy = true;
+      stage.style.height = stage.offsetHeight + "px";
+      from.classList.add("out-" + dir);
+      setTimeout(function () {
+        from.hidden = true;
+        from.classList.remove("out-" + dir);
+        next.hidden = false;
+        next.classList.add("in-" + dir);
+        var h = next.offsetHeight;
+        stage.style.height = h + "px";
+        finishEnter(next);
+        setTimeout(function () {
+          next.classList.remove("in-" + dir);
+          stage.style.height = "";
+          busy = false;
+        }, 560);
+      }, 240);
+    }
+
+    document.querySelectorAll("[data-next]").forEach(function (b) {
+      b.addEventListener("click", function () { go(cur + 1); });
+    });
+    document.querySelectorAll("[data-back]").forEach(function (b) {
+      b.addEventListener("click", function () { go(cur - 1); });
+    });
+
+    /* Конверт */
+    var opened = false;
+    $("env").addEventListener("click", function () {
+      if (opened) return;
+      opened = true;
+      $("env").classList.add("open");
+      setTimeout(function () { go(1); }, reduce ? 0 : 1000);
+    });
+
+    /* Кнопка «побыть одной» */
+    $("alone").addEventListener("click", function () {
+      if (busy) return;
+      if (cur === 5) {
+        returnTo = 4;
+        mode = "alone";
+        applyMode();
+        updateFinal();
+        refreshHeight();
+        var h = $("sendTitle");
+        h.focus({ preventScroll: true });
+        return;
+      }
+      returnTo = cur === 0 ? 1 : (cur >= 5 ? 4 : cur);
+      mode = "alone";
+      applyMode();
+      go(5);
+    });
+
+    $("backSend").addEventListener("click", function () {
+      if (mode === "alone") {
+        mode = "yes";
+        applyMode();
+        go(returnTo);
+      } else {
+        go(4);
+      }
+    });
+
+    /* ---------- Отправка ---------- */
+    function tgLink() {
+      var user = CONFIG.tgUsername.replace(/^@/, "");
+      return user
+        ? "https://t.me/" + encodeURIComponent(user)
+        : "https://t.me/share/url?url=&text=" + encodeURIComponent(messageText());
+    }
+
+    function doSend() {
+      if (!CONFIG.apiUrl) return Promise.reject(new Error("no api"));
+      var payload = {
+        kind: mode,
+        date: state.date ? fmtDate.format(state.date) : "",
+        time: state.time,
+        place: placeText(),
+        note: state.note.trim(),
+        text: messageText()
+      };
+      var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 12000);
+      return fetch(CONFIG.apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: ctrl ? ctrl.signal : undefined
+      }).then(function (r) {
+        clearTimeout(timer);
+        if (!r.ok) throw new Error("bad status");
+      }, function (e) {
+        clearTimeout(timer);
+        throw e;
+      });
+    }
+
+    function renderResult(ok) {
+      var alone = mode === "alone";
+      $("resBadge").classList.toggle("fail", !ok);
+      $("icoOk").hidden = !ok;
+      $("icoFail").hidden = ok;
+      $("resTitle").textContent = ok ? "Готово" : "Не получилось";
+      $("resText").textContent = ok
+        ? (alone
+            ? "Я получил твой ответ. Побудь одна, сколько нужно. Я рядом."
+            : "Ответ отправлен. Спасибо, что ответила. Я очень жду нашу встречу.")
+        : "Ответ не отправился. Попробуй ещё раз. Если не выходит, напиши мне в Телеграм, а текст можно скопировать.";
+      $("resFail").hidden = ok;
+      $("resBack").hidden = ok;
+      $("reply").hidden = true;
+      $("status").textContent = "";
+      $("tg").href = tgLink();
+      $("retry").disabled = false;
+    }
+
+    var sendBtn = $("send");
+    sendBtn.addEventListener("click", function () {
+      if (busy) return;
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Отправляю...";
+      var finish = function (ok) {
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Отправить ответ";
+        renderResult(ok);
+        go(6);
+      };
+      doSend().then(function () { finish(true); }, function () { finish(false); });
+    });
+
+    $("retry").addEventListener("click", function () {
+      var btn = $("retry");
+      btn.disabled = true;
+      $("status").textContent = "Отправляю...";
+      doSend().then(function () {
+        renderResult(true);
+        refreshHeight();
+      }, function () {
+        btn.disabled = false;
+        $("status").textContent = "Снова не получилось.";
+      });
+    });
+
+    $("backResult").addEventListener("click", function () { go(5); });
+
+    function selectReply() {
+      var range = document.createRange();
+      range.selectNodeContents($("reply"));
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    function copyReply() {
+      var text = messageText();
+      var fail = function () {
+        var box = $("reply");
+        box.textContent = text;
+        box.hidden = false;
+        selectReply();
+        $("status").textContent = "Текст выделен. Скопируй его и отправь мне.";
+        refreshHeight();
+      };
+      try {
+        navigator.clipboard.writeText(text).then(function () {
+          $("status").textContent = "Скопировано. Вставь текст в чат со мной.";
+        }, fail);
+      } catch (e) {
+        fail();
+      }
+    }
+
+    $("copy").addEventListener("click", copyReply);
+    $("tg").addEventListener("click", function () {
+      if (CONFIG.tgUsername) copyReply();
+    });
+
+    applyMode();
+    renderCal();
+    updatePicked();
+    validate();
+    updateFinal();
+  })();
+</script>
+</body>
+</html>
